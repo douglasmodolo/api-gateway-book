@@ -23,5 +23,15 @@ jobs:
         java-version: '21'
         distribution: 'adopt'
 
-    - name: Build API Gateway Docker Image
+    - name: Build API Gateway JAR
       run: mvn spring-boot:build-image
+
+    - name: Build API Gateway Docker Image
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.sha }} .
+        docker tag ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
+
+    - name: Push API Gateway Docker Image
+      run: |
+        docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.sha }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest        
